@@ -1,4 +1,4 @@
-declare const useAudioPlayer: (audioRef: React.RefObject<HTMLAudioElement>, progressBarRef: React.RefObject<HTMLInputElement>) => {
+export declare const useAudioPlayer: (audioRef: React.RefObject<HTMLAudioElement>, progressBarRef: React.RefObject<HTMLInputElement>) => {
     backThirty: () => void;
     changeAudioToPlayhead: () => void;
     changePlaybackSpeed: () => void;
@@ -13,5 +13,3 @@ declare const useAudioPlayer: (audioRef: React.RefObject<HTMLAudioElement>, prog
     tapSpaceBar: (e: KeyboardEvent) => void;
     togglePlaying: () => void;
 };
-
-export { useAudioPlayer };
