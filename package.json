@@ -1,7 +1,7 @@
 {
-  "name": "cabana-react",
+  "name": "react-hook-audio",
   "version": "1.0.0",
-  "description": "Cabana UI Components built for React",
+  "description": "A React hook for handling audio files",
   "repository": "https://github.com/",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
