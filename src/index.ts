@@ -5,79 +5,88 @@ export const useAudioPlayer = (audioRef: React.RefObject<HTMLAudioElement>, prog
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const animationRef = useRef<number | null>(null); // reference the animation
+  const animationRef = useRef<number>(); // reference the animation
 
   const onLoadedMetadata = () => {
-    if (audioRef?.current?.duration) {
+    if (audioRef.current && progressBarRef.current) {
       const seconds = Math.floor(audioRef.current.duration);
       setDuration(seconds);
-      progressBarRef!.current!.max = seconds.toString();
+      progressBarRef.current.max = String(seconds);
     }
   };
 
   // when the playhead is moved, update the current time (text)
   const updateCurrentTime = () => {
-    setCurrentTime(Number(progressBarRef!.current!.value));
+    if (progressBarRef.current)
+      setCurrentTime(Number(progressBarRef.current.value));
   };
 
   const pause = () => {
-    if (audioRef.current && animationRef?.current) {
+    if (audioRef.current && animationRef.current) {
       audioRef.current.pause();
       cancelAnimationFrame(animationRef.current);
     }
   };
 
   const restart = () => {
-    progressBarRef!.current!.value = "0";
-    updateCurrentTime();
-    pause();
+    if (progressBarRef.current) {
+      progressBarRef.current.value = String(0);
+      updateCurrentTime();
+      pause();
+    }
   };
 
   const whilePlaying = () => {
-    progressBarRef!.current!.value = Math.floor(audioRef!.current!.currentTime).toString();
-    progressBarRef!.current!.style.setProperty(
-      '--seek-before-width',
-      `${(Number(progressBarRef!.current!.value) / duration) * 100}%`
-    );
-    updateCurrentTime();
+    if (progressBarRef.current && audioRef.current) {
+      progressBarRef.current.value = String(Math.floor(audioRef.current.currentTime));
+      progressBarRef.current.style.setProperty(
+        '--seek-before-width',
+        `${(Number(progressBarRef.current.value) / duration) * 100}%`
+      );
+      updateCurrentTime();
 
-    // when you reach the end of the song
-    if (Number(progressBarRef!.current!.value) === duration) {
-      restart();
-      return;
+      // when you reach the end of the song
+      if (Number(progressBarRef.current.value) === duration) {
+        restart();
+        return;
+      }
     }
 
-    animationRef.current = requestAnimationFrame(whilePlaying);
+    if (animationRef.current)
+      animationRef.current = requestAnimationFrame(whilePlaying);
   };
 
   const play = () => {
-    audioRef!.current!.play();
+    if (audioRef.current)
+      audioRef.current.play();
     animationRef.current = requestAnimationFrame(whilePlaying);
   };
 
   const changePlaybackSpeed = () => {
-    switch (speed) {
-      case 1:
-        audioRef!.current!.playbackRate = 1.2;
-        setSpeed(1.2);
-        break;
-      case 1.2:
-        audioRef!.current!.playbackRate = 1.5;
-        setSpeed(1.5);
-        break;
-      case 1.5:
-        audioRef!.current!.playbackRate = 1.7;
-        setSpeed(1.7);
-        break;
-      case 1.7:
-        audioRef!.current!.playbackRate = 2;
-        setSpeed(2);
-        break;
-      case 2:
-      default:
-        audioRef!.current!.playbackRate = 1;
-        setSpeed(1);
-        break;
+    if (audioRef.current) {
+      switch (speed) {
+        case 1:
+          audioRef.current.playbackRate = 1.2;
+          setSpeed(1.2);
+          break;
+        case 1.2:
+          audioRef.current.playbackRate = 1.5;
+          setSpeed(1.5);
+          break;
+        case 1.5:
+          audioRef.current.playbackRate = 1.7;
+          setSpeed(1.7);
+          break;
+        case 1.7:
+          audioRef.current.playbackRate = 2;
+          setSpeed(2);
+          break;
+        case 2:
+        default:
+          audioRef.current.playbackRate = 1;
+          setSpeed(1);
+          break;
+      }
     }
   };
 
@@ -94,29 +103,34 @@ export const useAudioPlayer = (audioRef: React.RefObject<HTMLAudioElement>, prog
   // the playhead moves when you click on the progress bar
   // update the audio player to the new point
   const changeAudioToPlayhead = () => {
-    audioRef!.current!.currentTime = Number(progressBarRef!.current!.value);
-    setCurrentTime(Number(progressBarRef!.current!.value));
-    progressBarRef!.current!.style.setProperty(
-      '--seek-before-width',
-      `${(Number(progressBarRef!.current!.value) / duration) * 100}%`
-    );
+    if (audioRef.current && progressBarRef.current) {
+      audioRef.current.currentTime = Number(progressBarRef.current.value);
+      setCurrentTime(Number(progressBarRef.current.value));
+      progressBarRef.current.style.setProperty(
+        '--seek-before-width',
+        `${(Number(progressBarRef.current.value) / duration) * 100}%`
+      );
+    }
   };
 
-  const timeTravel = (newTime: number) => {
-    progressBarRef!.current!.value = newTime.toString();
+  const timeTravel = (newTime: Number) => {
+    if (progressBarRef.current)
+      progressBarRef.current.value = String(newTime);
     updateCurrentTime();
     changeAudioToPlayhead();
   };
 
   const backThirty = () => {
-    timeTravel(Number(progressBarRef!.current!.value) - 30);
+    if (progressBarRef.current)
+      timeTravel(Number(progressBarRef.current.value) - 30);
   };
 
   const forwardThirty = () => {
-    timeTravel(Number(progressBarRef!.current!.value) + 30);
+    if (progressBarRef.current)
+      timeTravel(Number(progressBarRef.current.value) + 30);
   };
 
-  const skipToTime = (newTime: number) => {
+  const skipToTime = (newTime: Number) => {
     timeTravel(newTime);
     play();
   };
