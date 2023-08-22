@@ -8,7 +8,7 @@ export declare const useAudioPlayer: (audioRef: React.RefObject<HTMLAudioElement
     isPlaying: boolean;
     onLoadedMetadata: () => void;
     play: () => void;
-    skipToTime: (newTime: number) => void;
+    skipToTime: (newTime: Number) => void;
     speed: number;
     tapSpaceBar: (e: KeyboardEvent) => void;
     togglePlaying: () => void;
